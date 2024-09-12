@@ -26,9 +26,61 @@ public class Talky {
         }
     }
 
+    /**
+     * Runs Talky Chatbot.
+     */
+    public void run() {
+        ui.printSeperator("Hello I'm Talky\n" + "How may I help you?");
+        boolean isRunning = true;
+        while (isRunning) {
+            try {
+                String newCommand = ui.getCommand();
+                String commandType = Parser.commandType(newCommand);
+                String[] commandArgs = Parser.commandArgs(newCommand, commandType);
+                switch (commandType) {
+                case "bye":
+                    ui.printSeperator("Bye!!! Do let me know if there's anything else!");
+                    isRunning = false;
+                    break;
+                case "list":
+                    ui.printSeperator(userTasks.toListFormat());
+                    break;
+                case "mark":
+                    mark(commandArgs);
+                    break;
+                case "unmark":
+                    unmark(commandArgs);
+                    break;
+                case "todo":
+                    addTodo(commandArgs);
+                    break;
+                case "deadline":
+                    addDeadline(commandArgs);
+                    break;
+                case "event":
+                    addEvent(commandArgs);
+                    break;
+                case "delete":
+                    delete(commandArgs);
+                    break;
+                case "find":
+                    find(commandArgs);
+                    break;
+                default:
+                    throw new TalkyException("Invalid Command");
+                }
+                saveData.saveData(userTasks);
+            } catch (TalkyException err) {
+                ui.printSeperator(err.getMessage());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws TalkyException {
+        new Talky().run();
+    }
 
     public String returnResponse(String input) {
-        assert (input != null);
         String command = input;
         String response = "";
         try {
